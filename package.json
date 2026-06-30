@@ -1,0 +1,20 @@
+{
+  "name": "twitter-embed-discord-bot",
+  "version": "1.0.0",
+  "description": "Discord bot that replaces Twitter/X links in a specific channel with embed-friendly links.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "discord.js": "14.26.4",
+    "dotenv": "16.4.5"
+  },
+  "overrides": {
+    "undici": "6.27.0"
+  }
+}
