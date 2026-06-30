@@ -1,6 +1,6 @@
 # Twitter/X Embed Discord Bot
 
-Small Discord bot that watches one Discord channel and converts `twitter.com` / `x.com` links into embed-friendly links such as `fxtwitter.com`.
+Small Discord bot that watches one or more Discord channels and converts `twitter.com` / `x.com` links into embed-friendly links such as `fxtwitter.com`.
 
 ## Behavior
 
@@ -20,7 +20,7 @@ If you set `DELETE_ORIGINAL=true`, the bot will try to remove the original messa
    - Read Message History
    - Manage Messages, only if `DELETE_ORIGINAL=true`
    - Manage Webhooks, only if `USE_WEBHOOK=true`
-6. Enable Developer Mode in Discord, right-click the channel you want watched, and copy its channel ID into `TARGET_CHANNEL_ID`.
+6. Enable Developer Mode in Discord, right-click each channel you want watched, and copy its channel ID into `TARGET_CHANNEL_IDS`.
 
 ## Environment Variables
 
@@ -29,7 +29,7 @@ Copy `.env.example` to `.env` for local testing, or set these directly in Coolif
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
 | `DISCORD_TOKEN` | yes | | Discord bot token. |
-| `TARGET_CHANNEL_ID` | yes | | Channel ID to watch. |
+| `TARGET_CHANNEL_IDS` | yes | | Comma-separated channel IDs to watch. You can also use the old single-channel `TARGET_CHANNEL_ID`. |
 | `REPLACEMENT_DOMAIN` | no | `fxtwitter.com` | Domain used for converted links. `vxtwitter.com` is another common option. |
 | `DELETE_ORIGINAL` | no | `false` | Delete the original Twitter/X message after posting the converted link. |
 | `USE_WEBHOOK` | no | `false` | Repost via webhook with the original author's display name/avatar. Requires Manage Webhooks. |
@@ -57,7 +57,7 @@ Recommended Coolify environment:
 
 ```env
 DISCORD_TOKEN=your-discord-bot-token
-TARGET_CHANNEL_ID=123456789012345678
+TARGET_CHANNEL_IDS=123456789012345678,234567890123456789
 REPLACEMENT_DOMAIN=fxtwitter.com
 DELETE_ORIGINAL=true
 USE_WEBHOOK=true
@@ -71,4 +71,4 @@ If you use the recommended delete-and-webhook mode, make sure the bot role is ab
 
 - Discord must be able to reach the replacement domain for embeds to appear.
 - Twitter/X embed frontends can change behavior over time. If one stops embedding, change `REPLACEMENT_DOMAIN` to another compatible frontend and redeploy.
-- The bot only watches the single configured channel.
+- The bot watches only the configured channel IDs.

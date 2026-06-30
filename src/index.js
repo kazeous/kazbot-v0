@@ -7,8 +7,14 @@ import {
   Partials
 } from "discord.js";
 
-const requiredEnv = ["DISCORD_TOKEN", "TARGET_CHANNEL_ID"];
-const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+const missingEnv = [];
+if (!process.env.DISCORD_TOKEN) {
+  missingEnv.push("DISCORD_TOKEN");
+}
+
+if (!process.env.TARGET_CHANNEL_IDS && !process.env.TARGET_CHANNEL_ID) {
+  missingEnv.push("TARGET_CHANNEL_IDS");
+}
 
 if (missingEnv.length > 0) {
   console.error(`Missing required environment variable(s): ${missingEnv.join(", ")}`);
@@ -17,7 +23,7 @@ if (missingEnv.length > 0) {
 
 const config = {
   token: process.env.DISCORD_TOKEN,
-  targetChannelId: process.env.TARGET_CHANNEL_ID,
+  targetChannelIds: parseChannelIds(process.env.TARGET_CHANNEL_IDS || process.env.TARGET_CHANNEL_ID),
   replacementDomain: normalizeReplacementDomain(process.env.REPLACEMENT_DOMAIN || "fxtwitter.com"),
   deleteOriginal: parseBoolean(process.env.DELETE_ORIGINAL, false),
   useWebhook: parseBoolean(process.env.USE_WEBHOOK, false),
@@ -36,12 +42,12 @@ const client = new Client({
 
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
-  console.log(`Watching channel ${config.targetChannelId}`);
+  console.log(`Watching channel(s): ${[...config.targetChannelIds].join(", ")}`);
 });
 
 client.on("messageCreate", async (message) => {
   try {
-    if (message.author.bot || message.channelId !== config.targetChannelId) {
+    if (message.author.bot || !config.targetChannelIds.has(message.channelId)) {
       return;
     }
 
@@ -207,6 +213,15 @@ function parseBoolean(value, defaultValue) {
   }
 
   return ["1", "true", "yes", "on"].includes(value.toLowerCase());
+}
+
+function parseChannelIds(value) {
+  return new Set(
+    value
+      .split(",")
+      .map((channelId) => channelId.trim())
+      .filter(Boolean)
+  );
 }
 
 function normalizeReplacementDomain(value) {
